@@ -1,0 +1,18 @@
+# Dependency directories
+.DS_Store
+vendor/
+node_modules/
+package-lock.json
+composer.lock
+
+# Logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Other
+*.zip

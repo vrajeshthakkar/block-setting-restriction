@@ -1,0 +1,57 @@
+/*!********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/sass/admin.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************/
+@font-face {
+  font-family: "Roboto";
+  src: url(/wp-content/plugins/block-setting-restriction/assets/build/fonts/Roboto-Black.cf56c1b1.ttf);
+  font-weight: normal;
+}
+#poststuff .inside {
+  margin: 0;
+}
+
+.postbox .inside {
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for the form group */
+.bsr-form-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  /* Bottom border for the group */
+  border-bottom: 1px solid #ccc;
+  /* Individual items within the form group */
+}
+.bsr-form-group .bsr-form-item {
+  flex: 1 1 48%; /* Two columns, each taking up roughly half the space */
+  padding: 10px;
+  /* Border between items (except the last one) */
+  /* Bottom border for each item */
+  /* Styling for the select box */
+}
+.bsr-form-group .bsr-form-item:not(:last-child) {
+  border-right: 1px solid #ccc;
+}
+.bsr-form-group .bsr-form-item .bsr-form-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+@media (max-width: 768px) {
+  .bsr-form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .bsr-form-group .bsr-form-item {
+    flex: 1 1 100%;
+  }
+  .bsr-form-group .bsr-form-item:not(:last-child) {
+    border-right: none;
+  }
+}
+
+/*# sourceMappingURL=admin.css.map*/
