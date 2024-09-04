@@ -67,28 +67,77 @@ class Admin {
 		// add_action( 'enqueue_block_editor_assets', array( $this, 'block_setting_restriction_enqueue_core_block_script' ) );
 		// add_filter( 'block_editor_settings_all', array( $this, 'remove_block_inspector_control' ) );
 		// add_filter( 'register_block_type_args', array( $this, 'remove_color_typography_from_paragraph_block' ), 10, 2 );
+
+		add_filter( 'block_type_metadata', array( $this, 'remove_the_class_anchor' ) );
+
+		// add_filter( 'block_editor_settings_all', array( $this, 'example_disable_inspector_tabs_by_default' ) );
+
+		// add_filter( 'wp_theme_json_data_theme', array( $this, 'filter_theme_json_theme' ), 999 );
 	}
 
-	// public function remove_block_inspector_control( $settings ) {
-	// 	// Check if the paragraph block is present in the settings
-	// 	if (isset($settings['blocks']['core/paragraph'])) {
-	// 		// Remove color settings
-	// 		$settings['blocks']['core/paragraph']['supports']['color'] = false;
+	public function remove_the_class_anchor( $metadata ) {
+		// Working code and get block metadata.
+		// echo "<pre>";
+		// print_r($metadata );
+		// echo "</pre>";
 
-	// 		// Remove typography settings
-	// 		$settings['blocks']['core/paragraph']['supports']['typography'] = false;
-	// 	}
+		if ( 'core/paragraph' == $metadata['name'] ) {
+			$metadata['attributes']['dropCap'] = false;
+			$metadata['supports']['color'] = false;
+			$metadata['supports']['spacing'] = false;
+			$metadata['supports']['typography'] = false;
+			// $metadata['supports']['__experimentalSelector'] = false;
+			// $metadata['supports']['__unstablePasteTextInline'] = false;
+			$metadata['supports']['customClassName'] = false;
+			$metadata['supports']['anchor'] = false;
+		}
+		
+		// if ( 'core/image' == $metadata['name'] ) {
+		// 	$metadata['styles'] = false;
+		// }
+
+		// $metadata['styles'] = false;
+
+		// $metadata['supports']['customClassName'] = false;
+		// $metadata['supports']['anchor'] = false;
+
+		return $metadata;
+	}
+
+	// public function filter_theme_json_theme($theme_json) {
+	// 	echo "<pre>";
+	// 	print_r( $theme_json->get_data() );
+	// 	echo "</pre>";
+	// }
+
+	// public function example_disable_inspector_tabs_by_default( $settings ) {
+	// 	echo "<pre>";
+	// 	print_r( $settings );
+	// 	echo "</pre>";
+
+	// 	$settings['blockInspectorTabs'] = array( 'default' => false );
 
 	// 	return $settings;
+	// }
 
-	//  error_log( print_r( $block_types, true ) );
+	// public function remove_block_inspector_control( $settings ) {
+	// 	// $settings = array();
+	// 	// Check if the paragraph block is present in the settings
+	// 	// if (isset($settings['blocks']['core/paragraph'])) {
+	// 	// 	// Remove color settings
+	// 	// 	$settings['blocks']['core/paragraph']['supports']['color'] = false;
+
+	// 	// 	// Remove typography settings
+	// 	// 	$settings['blocks']['core/paragraph']['supports']['typography'] = false;
+	// 	// }
+	// 	// return $settings;
 	// }
 
 	// public function remove_color_typography_from_paragraph_block( $settings, $name ) {
-	// 	if ( 'core/paragraph' === $name ) {
-	// 		$settings['supports']['color'] = false;
-	// 		$settings['supports']['typography'] = false;
+	// 	if ( 'core/paragraph' === $name || 'core/image' === $name ) {
+	// 		$settings['supports'] = [];
 	// 	}
+		
 	// 	return $settings;
 	// }
 
@@ -128,7 +177,7 @@ class Admin {
 		wp_enqueue_script(
 			'bsr-modifier',
 			BLOCK_SETTING_RESTRICTION_URL . 'assets/build/restriction.js',
-			array( 'wp-hooks', 'wp-compose', 'wp-editor', 'wp-element', 'wp-data', 'wp-components' ),
+			array( 'wp-hooks', 'wp-compose', 'wp-editor', 'wp-element', 'wp-data', 'wp-components', 'wp-dom-ready' ),
 			filemtime( BLOCK_SETTING_RESTRICTION_DIR . 'assets/build/restriction.js' ),
 			true
 		);
@@ -206,7 +255,8 @@ class Admin {
 		$registered_users  = get_users();
 		$bsr_data          = get_option( 'bsr_data' );
 		?>
-
+		<?php
+		/*
 		<div class="wrap">
 			<h2><?php esc_html_e( 'Block Setting Restriction', 'block-setting-restriction' ); ?></h2>
 			<?php settings_errors(); ?>
@@ -236,7 +286,7 @@ class Admin {
 															<?php
 															foreach ( $registered_users as $the_user ) {
 																?>
-																<option value="<?php echo esc_attr( $the_user->ID ); ?>" 
+																<option value="<?php echo esc_attr( $the_user->ID ); ?>"
 																	<?php echo in_array( $the_user->ID, $bsr_data[ $block_key ] ?? array() ) ? 'selected' : ''; ?>>
 																	<?php echo esc_html( $the_user->display_name ); ?>
 																</option>
@@ -257,6 +307,80 @@ class Admin {
 					</div>
 				</div>
 				<?php submit_button(); ?>
+			</form>
+		</div>
+		*/
+		?>
+		<div class="wrap">
+			<h2><?php esc_html_e( 'Block Setting Restriction', 'block-setting-restriction' ); ?></h2>
+			<?php settings_errors(); ?>
+
+			<form method="post" id="blockSettingRestrictionForm" action="options.php">
+				<?php settings_fields( 'block_setting_restriction_option_group' ); ?>
+				<div id="poststuff">
+					<div id="post-body" class="metabox-holder columns-2">
+						<div id="post-body-content">
+							<div class="meta-box-sortables ui-sortable">
+								<div class="postbox">
+									<div class="postbox-header">
+										<h2 class="hndle">
+											<span><?php esc_html_e( 'Block Setting', 'block-setting-restriction' ); ?></span>
+										</h2>
+									</div>
+									<div class="inside">
+										<div class="bsr-form-group no-border">
+											<input type="text" class="bsr-form-control" placeholder="Search block name..." id="searchBlockName" autocomplete="off" />
+										</div>
+										<?php
+										if ( ! empty( $registered_blocks ) ) {
+											foreach ( $registered_blocks as $block_key => $block_value ) {
+												$block_label  = ! empty( $block_value ) ? $block_value . ' <code>[ ' . $block_key . ' ]</code>' : $block_key;
+												$allowed_tags = array(
+													'code' => array(),
+												);
+												?>
+												<div class="bsr-form-group has-filter">
+													<div class="bsr-form-item">
+														<span class="block-name"><?php echo wp_kses( __( $block_label, 'block-setting-restriction' ), $allowed_tags ); ?></span>
+													</div>
+													<div class="bsr-form-item">
+														<select multiple name="bsr_data[<?php echo esc_attr( $block_key ); ?>][]" class="bsr-form-select">
+															<?php
+															foreach ( $registered_users as $the_user ) {
+																?>
+																<option value="<?php echo esc_attr( $the_user->ID ); ?>" 
+																	<?php echo in_array( $the_user->ID, $bsr_data[ $block_key ] ?? array() ) ? 'selected' : ''; ?>>
+																	<?php echo esc_html( $the_user->display_name ); ?>
+																</option>
+																<?php
+															}
+															?>
+														</select>
+													</div>
+												</div>
+												<?php
+											}
+										}
+										?>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Right Column (Sidebar, 20%) -->
+						<div id="postbox-container-1" class="postbox-container">
+							<div class="meta-box-sortables">
+								<div class="postbox">
+									<div class="postbox-header">
+										<h2 class="hndle"><span><?php esc_html_e( 'Actions', 'block-setting-restriction' ); ?></span></h2>
+									</div>
+									<div class="inside">
+										<?php submit_button(); ?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</form>
 		</div>
 		<?php

@@ -1,54 +1,136 @@
-#poststuff .inside {
+// #poststuff .inside {
+//     margin: 0;
+// }
+// .postbox .inside {
+//     margin: 0;
+//     padding: 0;
+// }
+// /* Container for the form group */
+// .bsr-form-group {
+//     display: flex;
+//     flex-wrap: wrap;
+//     justify-content: space-between;
+//     align-items: center;
+//     // margin-bottom: 15px;
+
+//     @media (max-width: 768px) {
+//         flex-direction: column;
+//         align-items: flex-start;
+//     }
+
+//     /* Bottom border for the group */
+//     border-bottom: 1px solid #ccc;
+
+//     /* Individual items within the form group */
+//     .bsr-form-item {
+//         flex: 1 1 48%; /* Two columns, each taking up roughly half the space */
+//         // margin-bottom: 10px;
+//         padding: 10px;
+
+//         @media (max-width: 768px) {
+//             flex: 1 1 100%;
+//         }
+
+//         /* Border between items (except the last one) */
+//         &:not(:last-child) {
+//             border-right: 1px solid #ccc;
+
+//             @media (max-width: 768px) {
+//                 border-right: none;
+//             }
+//         }
+
+//         /* Bottom border for each item */
+//         // border-bottom: 1px solid #ccc;
+
+//         /* Styling for the select box */
+//         .bsr-form-select {
+//             width: 100%;
+//             padding: 8px;
+//             border: 1px solid #ccc;
+//             border-radius: 4px;
+//         }
+//     }
+// }
+
+#blockSettingRestrictionForm #poststuff .inside {
     margin: 0;
 }
-.postbox .inside {
-    margin: 0;
-    padding: 0;
-}
-/* Container for the form group */
 .bsr-form-group {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
     align-items: center;
-    // margin-bottom: 15px;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f6f6f6;
+}
+.bsr-form-item {
+    flex: 1;
+    margin-right: 10px;
+}
+.bsr-form-item:last-child {
+    margin-right: 0;
+}
+.bsr-form-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.bsr-form-group.no-border {
+    border: none;
+}
+.bsr-form-group.no-border input {
+    border: 1px solid #c4c4c8;
+    height: 35px;
+    width: 100%;
+}
+.bsr-form-group.no-border input:focus {
+    box-shadow: none;
+    outline: none;
+}
 
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+/* Adjust the height of the select2 container */
+.select2-container .select2-selection--single {
+    height: 30px !important;
+    line-height: 30px !important; /* Aligns text vertically */
+    box-sizing: border-box;
+}
 
-    /* Bottom border for the group */
-    border-bottom: 1px solid #ccc;
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #c4c4c8 !important;
+}
 
-    /* Individual items within the form group */
-    .bsr-form-item {
-        flex: 1 1 48%; /* Two columns, each taking up roughly half the space */
-        // margin-bottom: 10px;
-        padding: 10px;
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background: #2271b1;
+}
 
-        @media (max-width: 768px) {
-            flex: 1 1 100%;
-        }
+/* Adjust the select2 arrow (dropdown indicator) */
+.select2-container .select2-selection--single .select2-selection__arrow {
+    height: 30px !important;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-        /* Border between items (except the last one) */
-        &:not(:last-child) {
-            border-right: 1px solid #ccc;
+/* Adjust the height of the input inside the select2 */
+.select2-container .select2-selection--single .select2-selection__rendered {
+    line-height: 30px !important;
+}
 
-            @media (max-width: 768px) {
-                border-right: none;
-            }
-        }
+/* Adjust tags height for select2 with multiple selection */
+.select2-container .select2-selection--multiple .select2-selection__choice {
+    height: 25px; /* Adjust height to fit inside the container */
+    line-height: 25px;
+    margin: 0 4px 4px 0;
+    background-color: #f6f6f6;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+}
 
-        /* Bottom border for each item */
-        // border-bottom: 1px solid #ccc;
+/* Adjust the overall select2 multiple container */
+.select2-container .select2-selection--multiple {
+    min-height: 30px;
+    box-sizing: border-box;
+    padding: 5px 5px 0 5px;
+}
 
-        /* Styling for the select box */
-        .bsr-form-select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-    }
+.select2-container .select2-search--inline .select2-search__field {
+    padding: 0 0 8px 0;
 }

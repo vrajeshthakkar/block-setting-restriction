@@ -42,6 +42,16 @@ module.exports = window["wp"]["data"];
 
 /***/ }),
 
+/***/ "@wordpress/dom-ready":
+/*!**********************************!*\
+  !*** external ["wp","domReady"] ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["domReady"];
+
+/***/ }),
+
 /***/ "@wordpress/element":
 /*!*********************************!*\
   !*** external ["wp","element"] ***!
@@ -137,19 +147,20 @@ var __webpack_exports__ = {};
   !*** ./src/js/block-setting-restriction.js ***!
   \*********************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/dom-ready */ "@wordpress/dom-ready");
+/* harmony import */ var _wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_dom_ready__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/hooks */ "@wordpress/hooks");
 /* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/compose */ "@wordpress/compose");
 /* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_compose__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__);
-
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__);
 // /**
 //  * Adds a filter to modify or extend the behavior of WordPress blocks or other functionalities.
 //  *
@@ -199,48 +210,104 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // Higher-Order Component to wrap InspectorControls
 
-const withDynamicInspectorControls = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_2__.createHigherOrderComponent)(OriginalComponent => {
-  return props => {
-    const {
-      name: blockName,
-      clientId
-    } = props;
-    const currentUserId = bsrConfig.userId; // console.log( "Props:", props );
-    // console.log( "Current User ID:", currentUserId );
-    // console.log( "Block Name:", blockName );
-    // Function to check if the current user is in the matching array
+ // domReady(() => {
+// const withDynamicInspectorControls = (settings, name) => {
+//     console.log("Settings: ", settings);
+//     if ( name === 'core/paragraph' ) {
+//         return settings;
+//     }
+// }
+// addFilter(
+//     'blocks.registerBlockType',
+//     'block-setting-restriction/with-dynamic-inspector-controls',
+//     withDynamicInspectorControls
+// )
+// Function to disable specific supports based on conditions
 
-    const isUserInMatchingArray = (blockName, currentUserId) => {
-      const bsrOptionsData = bsrConfig.bsrData;
+const disableBlockSupports = (controls, block) => {
+  const bsrOptionsData = bsrConfig.bsrData;
+  const theCurrentUserId = bsrConfig.userId;
+  console.log("controls: ", controls);
 
-      if (bsrOptionsData.hasOwnProperty(blockName)) {
-        const matchingArray = bsrOptionsData[blockName];
-        return matchingArray.includes(currentUserId);
-      }
-
-      return false;
-    }; // Check if the user should have access to block settings
-
-
-    const userHasAccess = isUserInMatchingArray(blockName, currentUserId); // console.log( "Has Access:", userHasAccess );
-    // console.log( "Current User ID:", currentUserId );
-    // console.log( "Block Name:", blockName );
-
-    if (userHasAccess) {
-      // Disable block settings for the user
-      console.log(props);
-      return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(OriginalComponent, props));
-    } else {
-      console.log("Here...");
+  const isUserInMatchingArray = (blockName, currentUserId) => {
+    if (bsrOptionsData.hasOwnProperty(blockName)) {
+      const matchingArray = bsrOptionsData[blockName];
+      return matchingArray.includes(currentUserId);
     }
 
-    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(OriginalComponent, props);
+    return false;
   };
-}, 'withDynamicInspectorControls');
-(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__.addFilter)( // 'editor.InspectorControls',
-'editor.BlockEdit', 'block-setting-restriction/with-dynamic-inspector-controls', withDynamicInspectorControls);
+
+  const userHasAccess = isUserInMatchingArray(name, theCurrentUserId);
+
+  if (!userHasAccess) {
+    if ('core/paragraph' === name) {
+      settings.supports = { ...settings.supports,
+        color: false,
+        typography: false,
+        __experimentalBorder: false,
+        spacing: false
+      };
+    }
+  }
+
+  return controls;
+}; // Apply the filter to modify block supports
+
+
+(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__.addFilter)('blocks.inspectorControls', 'my-plugin/disable-block-supports', disableBlockSupports); // const withDynamicInspectorControls = createHigherOrderComponent( ( OriginalComponent ) => {
+//     return ( props ) => {
+//         const { name: blockName, clientId } = props;
+//         const currentUserId = bsrConfig.userId;
+//         const isUserInMatchingArray = ( blockName, currentUserId ) => {
+//             const bsrOptionsData = bsrConfig.bsrData;
+//             if ( bsrOptionsData.hasOwnProperty( blockName ) ) {
+//                 const matchingArray = bsrOptionsData[ blockName ];
+//                 return matchingArray.includes( currentUserId );
+//             }
+//             return false;
+//         };
+//         // Check if the user should have access to block settings
+//         const userHasAccess = isUserInMatchingArray( blockName, currentUserId );
+//         console.log( "Has Access:", userHasAccess );
+//         console.log( "Current User ID:", currentUserId );
+//         console.log( "Block Name:", blockName );
+//         if ( userHasAccess ) {
+//             // Disable block settings for the user
+//             console.log(props);
+//             return (
+//                 <Fragment>
+//                     <Disabled>
+//                         <div style={ { opacity: 0.6, backgroundColor: '#eee', border: '2px dashed #999' } }>
+//                             <OriginalComponent {...props} />
+//                         </div>
+//                     </Disabled>
+//                 </Fragment>
+//             );
+//         } else {
+//             console.log("Here...");
+//         }
+//         return <OriginalComponent {...props} />;
+//     };
+// }, 'withDynamicInspectorControls');
+// addFilter(
+//     'editor.InspectorControls',
+//     // 'editor.BlockEdit',
+//     'block-setting-restriction/with-dynamic-inspector-controls',
+//     withDynamicInspectorControls
+// );
+// });
+
+jQuery(document).ready(function ($) {
+  $(document).on("keyup", ".bsr-form-group #searchBlockName", function () {
+    var value = $(this).val().toLowerCase();
+    console.log(value);
+    $("#blockSettingRestrictionForm .bsr-form-group.has-filter").filter(function () {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});
 })();
 
 /******/ })()

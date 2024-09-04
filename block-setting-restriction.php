@@ -58,4 +58,3 @@ function run_md_scaffold() {
 	$plugin = new \Block_Setting_Restriction\Inc\Block_Setting_Restriction();
 }
 run_md_scaffold();
-

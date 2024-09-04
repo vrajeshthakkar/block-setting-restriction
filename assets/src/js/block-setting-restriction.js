@@ -54,6 +54,7 @@
 
 
 // ------------------------------------------ SOLUTION 2 ------------------------------------------
+import domReady from '@wordpress/dom-ready';
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Fragment } from '@wordpress/element';
@@ -61,20 +62,30 @@ import { Disabled } from '@wordpress/components';
 import { store as blockEditorStore, InspectorControls } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 
-// Higher-Order Component to wrap InspectorControls
-const withDynamicInspectorControls = createHigherOrderComponent( ( OriginalComponent ) => {
-    return ( props ) => {
-        const { name: blockName, clientId } = props;
-        const currentUserId = bsrConfig.userId;
+// domReady(() => {
 
-        // console.log( "Props:", props );
-        // console.log( "Current User ID:", currentUserId );
-        // console.log( "Block Name:", blockName );
+    // const withDynamicInspectorControls = (settings, name) => {
+    //     console.log("Settings: ", settings);
+    //     if ( name === 'core/paragraph' ) {
+    //         return settings;
+    //     }
+    // }
 
-        // Function to check if the current user is in the matching array
+    // addFilter(
+    //     'blocks.registerBlockType',
+    //     'block-setting-restriction/with-dynamic-inspector-controls',
+    //     withDynamicInspectorControls
+    // )
+
+
+    // Function to disable specific supports based on conditions
+    const disableBlockSupports = (controls, block) => {
+        const bsrOptionsData = bsrConfig.bsrData;
+        const theCurrentUserId = bsrConfig.userId;
+
+        console.log("controls: ", controls);
+
         const isUserInMatchingArray = ( blockName, currentUserId ) => {
-            const bsrOptionsData = bsrConfig.bsrData;
-
             if ( bsrOptionsData.hasOwnProperty( blockName ) ) {
                 const matchingArray = bsrOptionsData[ blockName ];
 
@@ -84,48 +95,90 @@ const withDynamicInspectorControls = createHigherOrderComponent( ( OriginalCompo
             return false;
         };
 
-        // Check if the user should have access to block settings
-        const userHasAccess = isUserInMatchingArray( blockName, currentUserId );
+        const userHasAccess = isUserInMatchingArray( name, theCurrentUserId );
 
-        // console.log( "Has Access:", userHasAccess );
-        // console.log( "Current User ID:", currentUserId );
-        // console.log( "Block Name:", blockName );
-
-        if ( userHasAccess ) {
-            // Disable block settings for the user
-            console.log(props);
-            return (
-                <Fragment>
-                    <OriginalComponent {...props} />
-                    {/* <InspectorControls>
-                        {props.children.filter((child) => {
-                            const panelId = child.props.id || child.props.className;
-
-                            if ( panelId.includes('color') || panelId.includes('typography') ) {
-                                return false;
-                            }
-
-                            return true;
-                        })}
-                    </InspectorControls> */}
-                    {/* <Disabled>
-                        <div style={ { opacity: 0.6, backgroundColor: '#eee', border: '2px dashed #999' } }>
-                            <OriginalComponent {...props} />
-                        </div>
-                    </Disabled> */}
-                </Fragment>
-            );
-        } else {
-            console.log("Here...");
+        if ( ! userHasAccess ) {
+            if ( 'core/paragraph' === name ) {
+                settings.supports = {
+                    ...settings.supports,
+                    color: false,
+                    typography: false,
+                    __experimentalBorder: false,
+                    spacing: false,
+                };
+            }
         }
 
-        return <OriginalComponent {...props} />;
+        return controls;
     };
-}, 'withDynamicInspectorControls');
 
-addFilter(
-    // 'editor.InspectorControls',
-    'editor.BlockEdit',
-    'block-setting-restriction/with-dynamic-inspector-controls',
-    withDynamicInspectorControls
-);
+    // Apply the filter to modify block supports
+    addFilter(
+        'blocks.inspectorControls',
+        'my-plugin/disable-block-supports',
+        disableBlockSupports
+    );
+
+
+    // const withDynamicInspectorControls = createHigherOrderComponent( ( OriginalComponent ) => {
+    //     return ( props ) => {
+    //         const { name: blockName, clientId } = props;
+    //         const currentUserId = bsrConfig.userId;
+
+    //         const isUserInMatchingArray = ( blockName, currentUserId ) => {
+    //             const bsrOptionsData = bsrConfig.bsrData;
+    
+    //             if ( bsrOptionsData.hasOwnProperty( blockName ) ) {
+    //                 const matchingArray = bsrOptionsData[ blockName ];
+    
+    //                 return matchingArray.includes( currentUserId );
+    //             }
+    
+    //             return false;
+    //         };
+    
+    //         // Check if the user should have access to block settings
+    //         const userHasAccess = isUserInMatchingArray( blockName, currentUserId );
+    
+    //         console.log( "Has Access:", userHasAccess );
+    //         console.log( "Current User ID:", currentUserId );
+    //         console.log( "Block Name:", blockName );
+    
+    //         if ( userHasAccess ) {
+    //             // Disable block settings for the user
+    //             console.log(props);
+    //             return (
+    //                 <Fragment>
+    //                     <Disabled>
+    //                         <div style={ { opacity: 0.6, backgroundColor: '#eee', border: '2px dashed #999' } }>
+    //                             <OriginalComponent {...props} />
+    //                         </div>
+    //                     </Disabled>
+    //                 </Fragment>
+    //             );
+    //         } else {
+    //             console.log("Here...");
+    //         }
+    
+    //         return <OriginalComponent {...props} />;
+    //     };
+    // }, 'withDynamicInspectorControls');
+    
+    // addFilter(
+    //     'editor.InspectorControls',
+    //     // 'editor.BlockEdit',
+    //     'block-setting-restriction/with-dynamic-inspector-controls',
+    //     withDynamicInspectorControls
+    // );
+// });
+
+
+jQuery(document).ready(function($) {
+    $(document).on("keyup", ".bsr-form-group #searchBlockName", function() {
+        var value = $(this).val().toLowerCase();
+        console.log(value);
+        $("#blockSettingRestrictionForm .bsr-form-group.has-filter").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
